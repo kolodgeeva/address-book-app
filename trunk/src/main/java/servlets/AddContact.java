@@ -22,31 +22,39 @@ public class AddContact extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        UserContactDao uad = new UserContactDao();
-        HttpSession session = request.getSession(true);
 
-        Integer userId = (Integer)session.getAttribute("userId");
-        String name = request.getParameter("name");
-        String phone = request.getParameter("phone");
+        try{
+            UserContactDao uad = new UserContactDao();
+            HttpSession session = request.getSession(true);
 
-        UserContact contact = new UserContact(userId, name, phone);
-        Boolean isContactAdded =  uad.addContact(contact);
-        if(isContactAdded) {
-            response.sendRedirect("/contacts");
+            Integer userId = (Integer)session.getAttribute("userId");
+            String name = request.getParameter("name");
+            String phone = request.getParameter("phone");
+
+            UserContact contact = new UserContact(userId, name, phone);
+            Boolean isContactAdded =  uad.addContact(contact);
+            if(isContactAdded) {
+                response.sendRedirect("/contacts");
+            }
+            else{
+                RequestDispatcher dispatcher = request.getRequestDispatcher("//addContact.jsp");
+                dispatcher.forward(request, response);
+            }
         }
-        else{
-            RequestDispatcher dispatcher = request.getRequestDispatcher("//addContact.jsp");
-            dispatcher.forward(request, response);
+        catch (Exception e){
+            throw new ServletException("Server error with adding a contact", e);
         }
-
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        RequestDispatcher dispatcher = request.getRequestDispatcher("//addContact.jsp");
-        dispatcher.forward(request, response);
-
+        try{
+            RequestDispatcher dispatcher = request.getRequestDispatcher("//addContact.jsp");
+            dispatcher.forward(request, response);
+        }
+        catch (Exception e){
+            throw new ServletException("Server error with loading page", e);
+        }
     }
 }

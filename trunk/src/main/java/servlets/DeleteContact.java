@@ -20,23 +20,31 @@ public class DeleteContact extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        super.doPost(request, response);
+        try {
+            super.doPost(request, response);
+        }
+        catch (Exception e){
+            throw new ServletException("Server error with loading page", e);
+        }
     }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        try{
+            Integer contactId = Integer.valueOf(request.getParameter("contactId"));
 
-        Integer contactId = Integer.valueOf(request.getParameter("contactId"));
+            UserContact userContact = new UserContact();
+            userContact.setId(contactId);
 
-        UserContact userContact = new UserContact();
-        userContact.setId(contactId);
+            UserContactDao userContactDao = new UserContactDao();
+            Boolean isUserContactDeleted = userContactDao.deleteUserContact(userContact);
 
-        UserContactDao userContactDao = new UserContactDao();
-        Boolean isUserContactDeleted = userContactDao.deleteUserContact(userContact);
-
-        if(isUserContactDeleted){
-            response.sendRedirect("/contacts");
+            if(isUserContactDeleted){
+                response.sendRedirect("/contacts");
+            }
         }
-
+        catch (Exception e){
+            throw new ServletException("Server error with loading page", e);
+        }
     }
 }
