@@ -21,20 +21,25 @@ public class EditContact extends HttpServlet  {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        Integer contactId = Integer.valueOf(request.getParameter("id"));
-        String contactName = request.getParameter("name");
-        String contactPhone = request.getParameter("phone");
+        try{
+            Integer contactId = Integer.valueOf(request.getParameter("id"));
+            String contactName = request.getParameter("name");
+            String contactPhone = request.getParameter("phone");
 
-        UserContact userContact = new UserContact();
-        userContact.setId(contactId);
-        userContact.setName(contactName);
-        userContact.setPhone(contactPhone);
+            UserContact userContact = new UserContact();
+            userContact.setId(contactId);
+            userContact.setName(contactName);
+            userContact.setPhone(contactPhone);
 
-        UserContactDao userContactDao = new UserContactDao();
-        Boolean isUserContactSaved = userContactDao.saveUserContact(userContact);
+            UserContactDao userContactDao = new UserContactDao();
+            Boolean isUserContactSaved = userContactDao.saveUserContact(userContact);
 
-        if(isUserContactSaved){
-            response.sendRedirect("/contacts");
+            if(isUserContactSaved){
+                response.sendRedirect("/contacts");
+            }
+        }
+        catch (Exception e){
+            throw new ServletException("Server error with editing contact", e);
         }
 
     }
@@ -43,12 +48,17 @@ public class EditContact extends HttpServlet  {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String contactId = request.getParameter("contactId");
-        UserContactDao userContactDao = new UserContactDao();
-        UserContact userContact =  userContactDao.getUserContactById(Integer.valueOf(contactId));
-        request.setAttribute("contact", userContact);
+        try{
+            String contactId = request.getParameter("contactId");
+            UserContactDao userContactDao = new UserContactDao();
+            UserContact userContact =  userContactDao.getUserContactById(Integer.valueOf(contactId));
+            request.setAttribute("contact", userContact);
 
-        RequestDispatcher dispatcher = request.getRequestDispatcher("//editContact.jsp");
-        dispatcher.forward(request, response);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("//editContact.jsp");
+            dispatcher.forward(request, response);
+        }
+        catch (Exception e){
+            throw new ServletException("Some error with loading page", e);
+        }
     }
 }

@@ -4,13 +4,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-/**
- * Created with IntelliJ IDEA.
- * User: малыш
- * Date: 18.11.13
- * Time: 22:00
- * To change this template use File | Settings | File Templates.
- */
 public class ConnectionFactory {
 
     String driverClassName = "com.mysql.jdbc.Driver";
@@ -20,12 +13,8 @@ public class ConnectionFactory {
 
     private static ConnectionFactory connectionFactory = null;
 
-    private ConnectionFactory() {
-        try {
-            Class.forName(driverClassName);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+    private ConnectionFactory() throws ClassNotFoundException{
+        Class.forName(driverClassName);
     }
 
     public Connection getConnection() throws SQLException {
@@ -34,7 +23,7 @@ public class ConnectionFactory {
         return conn;
     }
 
-    public static ConnectionFactory getInstance() {
+    public static ConnectionFactory getInstance() throws ClassNotFoundException{
         if (connectionFactory == null) {
             connectionFactory = new ConnectionFactory();
         }

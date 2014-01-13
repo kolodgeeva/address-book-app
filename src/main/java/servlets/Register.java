@@ -1,13 +1,5 @@
 package servlets;
 
-/**
- * Created with IntelliJ IDEA.
- * User: малыш
- * Date: 04.11.13
- * Time: 23:20
- * To change this template use File | Settings | File Templates.
- */
-
 import dao.UserDao;
 import data.User;
 
@@ -24,51 +16,57 @@ public class Register extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        response.setContentType("text/html;charset=UTF-8");
+        try {
+            response.setContentType("text/html;charset=UTF-8");
 
-        String login = request.getParameter("login");
-        String password = request.getParameter("password");
-        String cpassword = request.getParameter("cpassword");
+            String login = request.getParameter("login");
+            String password = request.getParameter("password");
+            String cpassword = request.getParameter("cpassword");
 
-        String valid =  UserDao.isUserRegisterValid(login, password, cpassword);
+            String valid =  UserDao.isUserRegisterValid(login, password, cpassword);
 
-        if(valid == null){
-            //register user
+            if(valid == null){
 
-            User user = new User(login, password);
-            Integer id = UserDao.registerUser(user);
+                User user = new User(login, password);
+                Integer id = UserDao.registerUser(user);
 
-            if(id != 0){
-                HttpSession session = request.getSession(true);
-                session.setAttribute("userId", id);
+                if(id != 0){
+                    HttpSession session = request.getSession(true);
+                    session.setAttribute("userId", id);
 
-                response.sendRedirect("/contacts");
+                    response.sendRedirect("/contacts");
+                }
+                else{
+                    valid = "Some error with register";
+                    request.setAttribute("msg", valid);
+
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("//register.jsp");
+                    dispatcher.forward(request, response);
+                }
             }
             else{
-                valid = "Some error with register";
                 request.setAttribute("msg", valid);
 
                 RequestDispatcher dispatcher = request.getRequestDispatcher("//register.jsp");
                 dispatcher.forward(request, response);
             }
-
         }
-        else{
-
-            request.setAttribute("msg", valid);
-
-            RequestDispatcher dispatcher = request.getRequestDispatcher("//register.jsp");
-            dispatcher.forward(request, response);
+        catch (Exception e){
+            throw new ServletException("Server error with registration", e);
         }
-
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        RequestDispatcher dispatcher = request.getRequestDispatcher("//register.jsp");
-        dispatcher.forward(request, response);
+        try {
+            RequestDispatcher dispatcher = request.getRequestDispatcher("//register.jsp");
+            dispatcher.forward(request, response);
+        }
+        catch (Exception e){
+            throw new ServletException("Server error with loading registration page", e);
+        }
     }
 
 }

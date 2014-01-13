@@ -8,8 +8,12 @@
 </head>
 <body>
 <div class="alert alert-danger">
-    <H1>You not authorized</H1>
-    <a class="btn btn-danger" href="/login">Go to login page</a>
+    <H1>Error information</H1>
+    <p>The status code : ${statusCode}</p>
+    <p>Servlet Name : ${servletName}</p>
+    <p>Exception Type : ${throwable.getClass().getName()}</p>
+    <p>The request URI : ${requestUri}</p>
+    <p>The exception message : ${throwable.getMessage()}</p>
 </div>
 </body>
 </html>
